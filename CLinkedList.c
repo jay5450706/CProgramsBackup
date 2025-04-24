@@ -6,7 +6,7 @@ struct node {
     struct node *link;
 };
 
-void traverse(struct node*);
+void print_data(struct node*);
 void add_at_end(struct node*, int);
 struct node* addAtEnd(struct node*, int);
 struct node* add_at_beginning(struct node*, int);
@@ -18,6 +18,7 @@ void delLastNode(struct node*);
 void del_at_pos(struct node**, int);
 struct node* del_linked_list(struct node*);
 struct node* reverse(struct node*);
+int nodes_count(struct node*);
 
 int main(){
     struct node *head =  malloc(sizeof(struct node));
@@ -37,7 +38,7 @@ int main(){
     head -> link -> link = current;
     
     add_at_end(head, 21);
-    traverse(head);
+    print_data(head);
 
     struct node * ptr = head;
 
@@ -54,7 +55,7 @@ int main(){
 
     printf("\n");
     printf("\nMore nodes added at the end\n");
-    traverse(head);
+    print_data(head);
 
     head = add_at_beginning(head, 29);
     head = add_at_beginning(head, 98);
@@ -63,17 +64,17 @@ int main(){
 
     printf("\n");
     printf("\nMore nodes at the beginning\n");
-    traverse(head);
+    print_data(head);
 
     printf("\n");
     printf("\nInsertion\n");
     insert(head, 4, 87);
-    traverse(head);
+    print_data(head);
 
     printf("\n");
     printf("\nDeleting First Node\n");
     head = del_first_node(head);
-    traverse(head);
+    print_data(head);
 
     // printf("\n");
     // printf("%d", head -> link ->data);
@@ -81,35 +82,38 @@ int main(){
     printf("\nDeleting last node\n");
     delLastNode(head);
     printf("\n");
-    traverse(head);
+    print_data(head);
     
     printf("\nDeleting last node 2\n");
     head = del_last_node(head);
     printf("\n");
-    traverse(head);
+    print_data(head);
     
     printf("\nDeleting at position\n");
     del_at_pos(&head, 4);
     printf("\n");
-    traverse(head);
+    print_data(head);
+    del_at_pos(&head, 9);
 
     printf("\nReversed Linked List\n");
     head = reverse(head);
     printf("\n");
-    traverse(head);
+    print_data(head);
+
+    printf("\nNumber of nodes: %d ", nodes_count(head));
 
     printf("\nDeleting Linked List\n");
     head = del_linked_list(head);
     printf("\n");
-    traverse(head);
+    print_data(head);
 
     return 0;
 }
 
 /**************** Linked List functions ****************/
 
-void traverse(struct node *head){
-
+void print_data(struct node *head){
+//by traversing 
     if(head == NULL){
         printf("Linked list is empty");
         return;
@@ -185,18 +189,28 @@ void addAtBeginning(struct node **head, int data){
 
 //insert at a position
 void insert(struct node *head, int index, int data){
-    struct node *ptr = head;
-    index = index - 1;
-    int i = 1;
-    while(i < index){
-        ptr = ptr -> link;
-        i++;
+    
+    if(index >= (nodes_count(head) + 2) || index <= 0){
+        printf("Invalid Position");
+    }else if(head -> link == NULL){
+        add_at_end(head, data);
+    }else{
+
+        struct node *ptr = head;
+        index = index - 1;
+        int i = 1;
+        while(i < index){
+            ptr = ptr -> link;
+            i++;
+        }
+    
+        struct node *ptr2 = malloc(sizeof(struct node));
+        ptr2 -> data = data;
+        ptr2 -> link = ptr -> link;
+        ptr -> link = ptr2;
+
     }
 
-    struct node *ptr2 = malloc(sizeof(struct node));
-    ptr2 -> data = data;
-    ptr2 -> link = ptr -> link;
-    ptr -> link = ptr2;
 }
 
 struct node* del_first_node(struct node *head){
@@ -274,6 +288,11 @@ void del_at_pos(struct node **head, int position){
     //previous holds the address just before the node to be deleted
     //current holds the address of the node to be deleted
 
+    if(position > nodes_count(*head) || position <= 0){
+        printf("\nInvalid Position");
+        return;
+    }
+
     struct node *previous, *current;
     previous = current = *head;
 
@@ -322,4 +341,19 @@ struct node* reverse(struct node* head){
     head = previous;
     return head;
 }
+
+int nodes_count(struct node *head){
+    int count = 0;
+    if(head == NULL){
+
+    }else{
+        while(head != NULL){
+            head = head -> link;
+            count++;
+        }
+    }
+
+    return count;
+}
+
 
